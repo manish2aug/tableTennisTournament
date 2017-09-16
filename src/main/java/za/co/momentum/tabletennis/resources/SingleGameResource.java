@@ -33,6 +33,7 @@ public class SingleGameResource {
 	public ResponseEntity<MarketScanResponseMessage> save(SingleGamrWriteRepresentation rep) {
 
 		service.save();
-		return SingleGameResultReadRepresentation.getCollection(findAll);
+		// return SingleGameResultReadRepresentation.getCollection(findAll);
+		return null;
 	}
 }

@@ -20,4 +20,10 @@ public class SingleGameServiceImpl implements SingleGameService {
 		return repository.findAll();
 	}
 
+	@Override
+	public void save() {
+		// TODO Auto-generated method stub
+
+	}
+
 }
