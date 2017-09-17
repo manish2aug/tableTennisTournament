@@ -8,6 +8,6 @@ public interface SingleGameService {
 
 	Collection<SingleGame> findAll();
 
-	void save();
+	void save(Collection<SingleGame> entityCollection);
 
 }

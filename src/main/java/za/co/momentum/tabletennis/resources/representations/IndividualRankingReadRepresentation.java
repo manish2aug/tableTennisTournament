@@ -16,7 +16,7 @@ public class IndividualRankingReadRepresentation {
 
 		List<Participant> participants = new ArrayList<>();
 		for (SingleGameResultReadRepresentation game : singleGames) {
-			participants.add(getParticipant(participants, game));
+			getParticipant(participants, game);
 		}
 
 		Collections.sort(participants, new Comparator<Participant>() {
@@ -34,31 +34,32 @@ public class IndividualRankingReadRepresentation {
 		return participants;
 	}
 
-	private Participant getParticipant(Collection<Participant> participants, SingleGameResultReadRepresentation game) {
-
+	private void getParticipant(Collection<Participant> participants, SingleGameResultReadRepresentation game) {
 		String gameWinner = game.getWinnerName();
-		Participant participant = findExisting(participants, gameWinner);
 		boolean isFirstPlayerWon = (game.getFirstPlayerFullName().equals(game.getWinnerName())) ? true : false;
-		int winnerAccumulatedPoints = 0;
-		Collection<ScoreReadRepresentation> scores = game.getScores();
-		for (ScoreReadRepresentation score : scores) {
-			if (isFirstPlayerWon) {
-				winnerAccumulatedPoints = winnerAccumulatedPoints + score.getFirstPlayerPoints()
-						- score.getSecondPlayerPoints();
-			} else {
-				winnerAccumulatedPoints = winnerAccumulatedPoints + score.getSecondPlayerPoints()
-						- score.getFirstPlayerPoints();
-			}
-		}
 		String wonAgainst = (isFirstPlayerWon) ? game.getSecondPlayerFullName() : game.getFirstPlayerFullName();
+		Participant participant = findExisting(participants, gameWinner);
 
 		if (participant == null) {
-			return new Participant(gameWinner, winnerAccumulatedPoints, 1, wonAgainst);
+			int winnerAccumulatedPoints = 0;
+			Collection<ScoreReadRepresentation> scores = game.getScores();
+			for (ScoreReadRepresentation score : scores) {
+				if (isFirstPlayerWon) {
+					winnerAccumulatedPoints = winnerAccumulatedPoints + score.getFirstPlayerPoints()
+							- score.getSecondPlayerPoints();
+				} else {
+					winnerAccumulatedPoints = winnerAccumulatedPoints + score.getSecondPlayerPoints()
+							- score.getFirstPlayerPoints();
+				}
+			}
+			participants.add(new Participant(gameWinner, winnerAccumulatedPoints, 1, wonAgainst));
+			return;
 		}
-		int victories = participant.getVictories();
-		victories = victories + 1;
-		return participant;
-
+		participant.setVictories(participant.getVictories() + 1);
+		List<String> wonAgainstCollection = participant.getWonAgainst();
+		if (!wonAgainstCollection.contains(wonAgainst)) {
+			wonAgainstCollection.add(wonAgainst);
+		}
 	}
 
 	private Participant findExisting(Collection<Participant> participants, String gameWinner) {

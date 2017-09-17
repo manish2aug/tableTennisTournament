@@ -17,23 +17,36 @@ import za.co.momentum.tabletennis.services.TeamService;
 @RestController
 @RequestMapping(value = "/rest")
 public class PlayerResource {
-	
+
 	@Autowired
 	PlayerService playerService;
-	
+
 	@Autowired
 	TeamService teamService;
-	
+
 	@RequestMapping(value = "/players", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Collection<PlayerReadRepresentation> findAll(@RequestParam(required = false, name = "teamId") String teamId) {
-		Collection<Player> players;
-		
+	public Collection<PlayerReadRepresentation> findAll(@RequestParam(required = false, name = "teamId") String teamId,
+			@RequestParam(required = false, name = "belongsToSameTeam") boolean belongsToSameTeam) {
+		Collection<Player> players = null;
+
 		if (teamId != null) {
-			Team team = teamService.findById(Integer.getInteger(teamId));
-			players = playerService.findByTeam(team);
-		}else{
+			Team team = teamService.findById(Integer.valueOf(teamId));
+			if (belongsToSameTeam) {
+				players = playerService.findByTeam(team);
+			} else {
+				players = playerService.findAllPlayersBelogToOtherTeam(team.getId());
+			}
+		} else {
 			players = playerService.findAll();
 		}
 		return PlayerReadRepresentation.getConvertedCollection(players);
 	}
+
+	// @RequestMapping(value = "/players", produces =
+	// MediaType.APPLICATION_JSON_VALUE)
+	// public Collection<PlayerReadRepresentation>
+	// findPlayersOfDifferentTeam(@RequestParam(required = false, name = "teamId")
+	// String teamId) {
+	//
+	// }
 }

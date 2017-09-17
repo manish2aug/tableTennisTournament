@@ -26,4 +26,9 @@ public class PlayerServiceImpl implements PlayerService {
 		return repository.findByTeam(team);
 	}
 
+	@Override
+	public Collection<Player> findAllPlayersBelogToOtherTeam(int teamId) {
+		return repository.findAllPlayersBelongsToOtherTeam(teamId);
+	}
+
 }

@@ -21,8 +21,8 @@ public class SingleGameServiceImpl implements SingleGameService {
 	}
 
 	@Override
-	public void save() {
-		// TODO Auto-generated method stub
+	public void save(Collection<SingleGame> game) {
+		repository.save(game);
 
 	}
 

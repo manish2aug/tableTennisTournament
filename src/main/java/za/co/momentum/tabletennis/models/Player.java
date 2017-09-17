@@ -36,6 +36,10 @@ public class Player {
 	public Player() {
 	}
 
+	public Player(long id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
 		return "Player [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", photoPath=" + photoPath

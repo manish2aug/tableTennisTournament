@@ -10,4 +10,6 @@ public interface PlayerService {
 	Collection<Player> findAll();
 
 	Collection<Player> findByTeam(Team team);
+
+	Collection<Player> findAllPlayersBelogToOtherTeam(int teamId);
 }

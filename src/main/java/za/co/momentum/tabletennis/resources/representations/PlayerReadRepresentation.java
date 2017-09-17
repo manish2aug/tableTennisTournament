@@ -15,6 +15,7 @@ public class PlayerReadRepresentation {
 	private String lastName;
 	private String photoPath;
 	private String teamName;
+	private String teamId;
 	private String teamColor;
 	@JsonProperty(value = "isCaptain")
 	private boolean isCaptain;
@@ -38,6 +39,7 @@ public class PlayerReadRepresentation {
 		Team team = player.getTeam();
 		if (team != null) {
 			this.teamName = team.getName();
+			this.teamId = String.valueOf(team.getId());
 			this.teamColor = team.getColor();
 		}
 	}
@@ -104,6 +106,14 @@ public class PlayerReadRepresentation {
 
 	public void setTeamColor(String teamColor) {
 		this.teamColor = teamColor;
+	}
+
+	public String getTeamId() {
+		return teamId;
+	}
+
+	public void setTeamId(String teamId) {
+		this.teamId = teamId;
 	}
 
 }
