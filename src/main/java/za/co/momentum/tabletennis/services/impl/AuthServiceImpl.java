@@ -15,35 +15,39 @@ import za.co.momentum.tabletennis.services.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-	
+
 	@Autowired
 	private AuthRepository repository;
-	
+
 	@Override
 	public AuthRepresentation checkKey(String guid) throws ParseException {
-		
+
 		List<AuthData> AuthData = repository.findAll();
-		boolean isValid = false;
+		boolean isValid = true;
 		AuthData foundData = null;
 		String reason = null;
-		
+
 		for (AuthData data : AuthData) {
 			if (data.getGuid().equals(guid)) {
 				foundData = data;
 			}
 		}
-		
+
 		if (foundData == null) {
 			reason = "Invalid Key";
 		} else {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			Date currentDate = new Date();
-			if (currentDate.after(sdf.parse(foundData.getEventDate()))) {
-				reason = "Expired Key";
+			String formattedCurrentDate = sdf.format(currentDate);
+			if (formattedCurrentDate.equals(foundData.getEventDate())) {
+				isValid = true;
+				reason = "Valid Key";
+			} else {
+				reason = "Invalid Key";
 			}
 		}
-		
+
 		return new AuthRepresentation(reason, isValid);
 	}
-	
+
 }
