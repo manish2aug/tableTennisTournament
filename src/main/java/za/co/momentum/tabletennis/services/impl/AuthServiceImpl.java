@@ -23,7 +23,7 @@ public class AuthServiceImpl implements AuthService {
 	public AuthRepresentation checkKey(String guid) throws ParseException {
 
 		List<AuthData> AuthData = repository.findAll();
-		boolean isValid = true;
+		boolean isValid = false;
 		AuthData foundData = null;
 		String reason = null;
 
