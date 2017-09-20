@@ -1,5 +1,6 @@
 package za.co.momentum.tabletennis.resources.representations;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -49,7 +50,7 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 			DoubleGameResultReadRepresentation rep = findExisting(representations, game);
 			if (rep == null) {
 				rep = new DoubleGameResultReadRepresentation();
-				rep.setEventDate(game.getEventDate());
+				rep.setEventDate(new SimpleDateFormat("yyyy-MM-dd").format(game.getEventDate()));
 
 				Player firstPairFirstPlayer = game.getFirstPairFirstPlayer();
 				rep.firstPairFirstPlayerFullName = firstPairFirstPlayer.getFirstName() + " "
@@ -107,7 +108,7 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 			Player firstPairSecondPlayer = game.getFirstPairSecondPlayer();
 			Player secondPairFirstPlayer = game.getSecondPairFirstPlayer();
 			Player secondPairSecondPlayer = game.getSecondPairSecondPlayer();
-			String eventDate = game.getEventDate();
+			String eventDate = new SimpleDateFormat("yyyy-MM-dd").format(game.getEventDate());
 
 			if (rep.getFirstPairFirstPlayerFullName()
 					.equals(firstPairFirstPlayer.getFirstName() + " " + firstPairFirstPlayer.getLastName())

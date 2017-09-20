@@ -20,4 +20,9 @@ public class DoubleGameServiceImpl implements DoubleGameService {
 		return repository.findAll();
 	}
 
+	@Override
+	public void save(Collection<DoubleGame> entityCollection) {
+		repository.save(entityCollection);
+	}
+
 }

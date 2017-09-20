@@ -1,5 +1,7 @@
 package za.co.momentum.tabletennis.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +20,7 @@ public class DoubleGame {
 	private Long id;
 
 	@Column(name = "EVENT_DATE")
-	private String eventDate;
+	private Date eventDate;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "firstPairFirstPlayerId", referencedColumnName = "id")
@@ -63,11 +65,11 @@ public class DoubleGame {
 		this.id = id;
 	}
 
-	public String getEventDate() {
+	public Date getEventDate() {
 		return eventDate;
 	}
 
-	public void setEventDate(String eventDate) {
+	public void setEventDate(Date eventDate) {
 		this.eventDate = eventDate;
 	}
 

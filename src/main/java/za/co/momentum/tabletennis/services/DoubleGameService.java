@@ -8,4 +8,6 @@ public interface DoubleGameService {
 
 	Collection<DoubleGame> findAll();
 
+	void save(Collection<DoubleGame> entityCollection);
+
 }

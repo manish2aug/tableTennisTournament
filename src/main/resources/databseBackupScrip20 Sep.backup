@@ -1,0 +1,693 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.5.1
+-- Dumped by pg_dump version 9.5.1
+
+-- Started on 2017-09-20 00:08:08
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE tournament;
+--
+-- TOC entry 2159 (class 1262 OID 30759)
+-- Name: tournament; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE tournament WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'English_India.1252' LC_CTYPE = 'English_India.1252';
+
+
+ALTER DATABASE tournament OWNER TO postgres;
+
+\connect tournament
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 8 (class 2615 OID 30845)
+-- Name: momentum_tournament; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA momentum_tournament;
+
+
+ALTER SCHEMA momentum_tournament OWNER TO postgres;
+
+--
+-- TOC entry 6 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO postgres;
+
+--
+-- TOC entry 2160 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+--
+-- TOC entry 1 (class 3079 OID 12355)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2162 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = momentum_tournament, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 189 (class 1259 OID 30893)
+-- Name: double_game; Type: TABLE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE TABLE double_game (
+    id integer NOT NULL,
+    event_date date NOT NULL,
+    first_pair_first_player_id integer NOT NULL,
+    first_pair_second_player_id integer NOT NULL,
+    second_pair_first_player_id integer NOT NULL,
+    second_pair_second_player_id integer NOT NULL,
+    first_pair_total_points integer NOT NULL,
+    second_pair_total_points integer NOT NULL
+);
+
+
+ALTER TABLE double_game OWNER TO postgres;
+
+--
+-- TOC entry 188 (class 1259 OID 30891)
+-- Name: double_game_id_seq; Type: SEQUENCE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE SEQUENCE double_game_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE double_game_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2163 (class 0 OID 0)
+-- Dependencies: 188
+-- Name: double_game_id_seq; Type: SEQUENCE OWNED BY; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER SEQUENCE double_game_id_seq OWNED BY double_game.id;
+
+
+--
+-- TOC entry 185 (class 1259 OID 30859)
+-- Name: players; Type: TABLE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE TABLE players (
+    id integer NOT NULL,
+    first_name character varying(255) NOT NULL,
+    last_name character varying(255) NOT NULL,
+    photo_path character varying(255),
+    is_captain boolean NOT NULL,
+    team_id integer NOT NULL
+);
+
+
+ALTER TABLE players OWNER TO postgres;
+
+--
+-- TOC entry 184 (class 1259 OID 30857)
+-- Name: players_id_seq; Type: SEQUENCE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE SEQUENCE players_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE players_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2164 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: players_id_seq; Type: SEQUENCE OWNED BY; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER SEQUENCE players_id_seq OWNED BY players.id;
+
+
+--
+-- TOC entry 187 (class 1259 OID 30875)
+-- Name: single_game; Type: TABLE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE TABLE single_game (
+    id integer NOT NULL,
+    event_date date NOT NULL,
+    first_player_id integer NOT NULL,
+    first_player_total_points integer,
+    second_player_id integer NOT NULL,
+    second_player_total_points integer NOT NULL
+);
+
+
+ALTER TABLE single_game OWNER TO postgres;
+
+--
+-- TOC entry 186 (class 1259 OID 30873)
+-- Name: single_game_id_seq; Type: SEQUENCE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE SEQUENCE single_game_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE single_game_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2165 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: single_game_id_seq; Type: SEQUENCE OWNED BY; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER SEQUENCE single_game_id_seq OWNED BY single_game.id;
+
+
+--
+-- TOC entry 183 (class 1259 OID 30848)
+-- Name: teams; Type: TABLE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE TABLE teams (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    color character varying(255) NOT NULL
+);
+
+
+ALTER TABLE teams OWNER TO postgres;
+
+--
+-- TOC entry 182 (class 1259 OID 30846)
+-- Name: teams_id_seq; Type: SEQUENCE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE SEQUENCE teams_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE teams_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2166 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: teams_id_seq; Type: SEQUENCE OWNED BY; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER SEQUENCE teams_id_seq OWNED BY teams.id;
+
+
+--
+-- TOC entry 191 (class 1259 OID 30922)
+-- Name: update_authority; Type: TABLE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE TABLE update_authority (
+    id integer NOT NULL,
+    event_date date NOT NULL,
+    captain_id integer NOT NULL,
+    guid character varying(255) NOT NULL
+);
+
+
+ALTER TABLE update_authority OWNER TO postgres;
+
+--
+-- TOC entry 190 (class 1259 OID 30920)
+-- Name: update_authority_id_seq; Type: SEQUENCE; Schema: momentum_tournament; Owner: postgres
+--
+
+CREATE SEQUENCE update_authority_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE update_authority_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2167 (class 0 OID 0)
+-- Dependencies: 190
+-- Name: update_authority_id_seq; Type: SEQUENCE OWNED BY; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER SEQUENCE update_authority_id_seq OWNED BY update_authority.id;
+
+
+--
+-- TOC entry 2011 (class 2604 OID 30896)
+-- Name: id; Type: DEFAULT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY double_game ALTER COLUMN id SET DEFAULT nextval('double_game_id_seq'::regclass);
+
+
+--
+-- TOC entry 2009 (class 2604 OID 30862)
+-- Name: id; Type: DEFAULT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY players ALTER COLUMN id SET DEFAULT nextval('players_id_seq'::regclass);
+
+
+--
+-- TOC entry 2010 (class 2604 OID 30878)
+-- Name: id; Type: DEFAULT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY single_game ALTER COLUMN id SET DEFAULT nextval('single_game_id_seq'::regclass);
+
+
+--
+-- TOC entry 2008 (class 2604 OID 30851)
+-- Name: id; Type: DEFAULT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY teams ALTER COLUMN id SET DEFAULT nextval('teams_id_seq'::regclass);
+
+
+--
+-- TOC entry 2012 (class 2604 OID 30925)
+-- Name: id; Type: DEFAULT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY update_authority ALTER COLUMN id SET DEFAULT nextval('update_authority_id_seq'::regclass);
+
+
+--
+-- TOC entry 2152 (class 0 OID 30893)
+-- Dependencies: 189
+-- Data for Name: double_game; Type: TABLE DATA; Schema: momentum_tournament; Owner: postgres
+--
+
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (1, '2017-09-08', 7, 2, 17, 15, 11, 8);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (2, '2017-09-08', 7, 2, 17, 15, 11, 5);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (3, '2017-09-08', 3, 9, 16, 17, 4, 11);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (4, '2017-09-08', 3, 9, 16, 17, 3, 11);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (5, '2017-09-08', 6, 8, 10, 15, 3, 11);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (6, '2017-09-08', 6, 8, 10, 15, 3, 11);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (7, '2017-09-08', 26, 19, 28, 29, 11, 9);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (8, '2017-09-08', 26, 19, 28, 29, 11, 9);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (9, '2017-09-08', 22, 24, 32, 36, 5, 11);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (10, '2017-09-08', 22, 24, 32, 36, 6, 11);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (11, '2017-09-08', 21, 25, 31, 33, 11, 8);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (12, '2017-09-08', 21, 25, 31, 33, 11, 6);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (13, '2017-09-15', 15, 13, 31, 33, 14, 12);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (14, '2017-09-15', 15, 13, 31, 33, 11, 9);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (15, '2017-09-15', 28, 29, 16, 18, 11, 5);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (16, '2017-09-15', 28, 29, 16, 18, 11, 7);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (17, '2017-09-15', 2, 7, 27, 25, 11, 9);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (18, '2017-09-15', 2, 7, 27, 25, 11, 5);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (19, '2017-09-15', 15, 18, 32, 34, 11, 3);
+INSERT INTO double_game (id, event_date, first_pair_first_player_id, first_pair_second_player_id, second_pair_first_player_id, second_pair_second_player_id, first_pair_total_points, second_pair_total_points) VALUES (20, '2017-09-15', 15, 18, 32, 34, 11, 5);
+
+
+--
+-- TOC entry 2168 (class 0 OID 0)
+-- Dependencies: 188
+-- Name: double_game_id_seq; Type: SEQUENCE SET; Schema: momentum_tournament; Owner: postgres
+--
+
+SELECT pg_catalog.setval('double_game_id_seq', 22, true);
+
+
+--
+-- TOC entry 2148 (class 0 OID 30859)
+-- Dependencies: 185
+-- Data for Name: players; Type: TABLE DATA; Schema: momentum_tournament; Owner: postgres
+--
+
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (1, 'CAL', 'Maduray', NULL, true, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (2, 'Gerald', 'Rajah', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (3, 'Lloyd', 'Naidoo', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (4, 'Tshepo', 'Semunza', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (5, 'Damien', 'Kisten', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (6, 'Gideon', 'Du Toit', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (7, 'Manish', 'Kumar', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (8, 'Praveen', 'Koppula', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (9, 'Rietha', 'Jansen van Rensburg', NULL, false, 1);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (10, 'Brenden', 'Poonsamy', NULL, true, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (11, 'Merriman', 'Gcasamba', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (12, 'Vishal', 'Mahes', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (13, 'Marlin', 'Esau', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (15, 'Franco', 'Opperman', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (16, 'Hiiren', 'Parmar', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (17, 'Imtiaz', 'Mohammed Alli', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (18, 'Neil', 'Hannekom', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (19, 'Ronald', 'Lawrence', NULL, true, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (20, 'Hammad', 'Hassan', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (21, 'Malcolm', 'van Wyk', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (22, 'Maria', 'Henning', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (23, 'Ammar', 'Rehman', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (24, 'Francis', 'Nana', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (25, 'Frans', 'Stofberg', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (26, 'Sathish', 'Mani', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (27, 'Warren', 'Kemm', NULL, false, 3);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (29, 'Ian', 'Smith', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (30, 'Kamlasan', 'Govender', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (31, 'Anastassia', 'Rakitianskaia', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (32, 'Dean', 'Strang', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (33, 'Francois', 'de Jager', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (34, 'Nitendra', 'Rajput', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (36, 'Wimpie', 'Baben', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (14, 'Damilola', 'Okuboyejo', NULL, false, 2);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (35, 'Roger', 'Dowman', NULL, false, 4);
+INSERT INTO players (id, first_name, last_name, photo_path, is_captain, team_id) VALUES (28, 'Phegello', 'Moloto', NULL, true, 4);
+
+
+--
+-- TOC entry 2169 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: players_id_seq; Type: SEQUENCE SET; Schema: momentum_tournament; Owner: postgres
+--
+
+SELECT pg_catalog.setval('players_id_seq', 36, true);
+
+
+--
+-- TOC entry 2150 (class 0 OID 30875)
+-- Dependencies: 187
+-- Data for Name: single_game; Type: TABLE DATA; Schema: momentum_tournament; Owner: postgres
+--
+
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (1, '2017-09-08', 1, 6, 10, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (2, '2017-09-08', 1, 4, 10, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (3, '2017-09-08', 5, 11, 16, 3);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (4, '2017-09-08', 5, 5, 16, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (5, '2017-09-08', 5, 8, 16, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (6, '2017-09-08', 2, 7, 14, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (7, '2017-09-08', 2, 11, 14, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (8, '2017-09-08', 2, 11, 14, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (9, '2017-09-08', 19, 11, 28, 13);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (10, '2017-09-08', 19, 11, 28, 9);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (11, '2017-09-08', 19, 4, 28, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (12, '2017-09-08', 26, 11, 36, 4);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (13, '2017-09-08', 26, 11, 36, 8);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (14, '2017-09-08', 27, 15, 29, 13);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (15, '2017-09-08', 27, 10, 29, 12);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (16, '2017-09-08', 27, 11, 29, 7);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (52, '2017-09-15', 34, 3, 13, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (53, '2017-09-15', 34, 10, 13, 12);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (54, '2017-09-15', 25, 11, 8, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (55, '2017-09-15', 25, 11, 8, 8);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (56, '2017-09-15', 26, 11, 4, 2);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (57, '2017-09-15', 26, 11, 4, 4);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (58, '2017-09-15', 19, 11, 2, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (59, '2017-09-15', 19, 15, 2, 13);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (60, '2017-09-15', 24, 4, 4, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (61, '2017-09-15', 24, 11, 4, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (62, '2017-09-15', 24, 8, 4, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (63, '2017-09-15', 7, 13, 26, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (64, '2017-09-15', 7, 7, 26, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (65, '2017-09-15', 7, 6, 26, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (66, '2017-09-15', 32, 10, 15, 12);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (67, '2017-09-15', 32, 11, 15, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (69, '2017-09-15', 18, 11, 32, 8);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (70, '2017-09-15', 18, 10, 32, 12);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (71, '2017-09-15', 18, 11, 32, 7);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (72, '2017-09-15', 2, 3, 26, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (73, '2017-09-15', 2, 11, 26, 6);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (74, '2017-09-15', 2, 10, 26, 12);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (75, '2017-09-15', 2, 11, 27, 7);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (76, '2017-09-15', 2, 8, 27, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (77, '2017-09-15', 2, 11, 27, 7);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (78, '2017-09-15', 31, 11, 15, 6);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (79, '2017-09-15', 31, 10, 15, 12);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (80, '2017-09-15', 31, 5, 15, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (81, '2017-09-15', 29, 11, 16, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (82, '2017-09-15', 29, 7, 16, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (83, '2017-09-15', 29, 9, 16, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (84, '2017-09-15', 33, 9, 15, 11);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (85, '2017-09-15', 33, 11, 15, 6);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (86, '2017-09-15', 33, 11, 15, 5);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (68, '2017-09-15', 32, 11, 15, 9);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (113, '2017-09-15', 22, 11, 9, 9);
+INSERT INTO single_game (id, event_date, first_player_id, first_player_total_points, second_player_id, second_player_total_points) VALUES (114, '2017-09-15', 22, 11, 9, 9);
+
+
+--
+-- TOC entry 2170 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: single_game_id_seq; Type: SEQUENCE SET; Schema: momentum_tournament; Owner: postgres
+--
+
+SELECT pg_catalog.setval('single_game_id_seq', 114, true);
+
+
+--
+-- TOC entry 2146 (class 0 OID 30848)
+-- Dependencies: 183
+-- Data for Name: teams; Type: TABLE DATA; Schema: momentum_tournament; Owner: postgres
+--
+
+INSERT INTO teams (id, name, color) VALUES (1, 'A', 'RED');
+INSERT INTO teams (id, name, color) VALUES (2, 'B', 'WHITE');
+INSERT INTO teams (id, name, color) VALUES (3, 'C', 'NAVY');
+INSERT INTO teams (id, name, color) VALUES (4, 'D', 'GRAY');
+
+
+--
+-- TOC entry 2171 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: teams_id_seq; Type: SEQUENCE SET; Schema: momentum_tournament; Owner: postgres
+--
+
+SELECT pg_catalog.setval('teams_id_seq', 1, false);
+
+
+--
+-- TOC entry 2154 (class 0 OID 30922)
+-- Dependencies: 191
+-- Data for Name: update_authority; Type: TABLE DATA; Schema: momentum_tournament; Owner: postgres
+--
+
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (1, '2017-09-15', 1, '{A89320E6-BC82-4F3B-A568-64D818EDD116}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (2, '2017-09-22', 1, '{A75D8656-79A1-4156-9E9B-16A71AB25F23}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (3, '2017-10-06', 1, '{01614E2F-A483-4EBD-8258-D51EB2793596}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (4, '2017-10-13', 1, '{0D130C8F-54BF-4DBA-A364-91DD374249BC}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (5, '2017-10-20', 1, '{569E9C0E-A6CD-49C7-BAB0-A34BBD70F9C7}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (6, '2017-11-10', 1, '{E2C412AD-D27B-4E35-9CAF-8FD004D23D4A}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (7, '2017-11-17', 1, '{C6D99715-C531-475A-BE68-7D5E8557378A}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (8, '2017-09-15', 19, '{94575530-6FA2-4C44-8D07-6D993FC4407C}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (9, '2017-09-22', 19, '{1B342348-5B87-4022-BB8E-702DCE34EE41}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (10, '2017-10-06', 19, '{63936E17-6B8E-4697-AE18-96FCFB4D475E}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (11, '2017-10-13', 19, '{4642DD8F-2CB3-4663-B079-1D8EDFBF83BA}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (12, '2017-10-20', 19, '{33B89F5F-532A-4374-B519-96BB1E880581}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (13, '2017-11-10', 19, '{FD80B621-4A61-4334-8D34-417A74BA4ACE}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (14, '2017-11-17', 19, '{15644820-0004-4084-9A2A-5F9E8E6C59BC}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (15, '2017-09-15', 10, '{E3D1CA9A-25CE-4783-9E60-A6AE3CC1CF03}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (16, '2017-09-22', 10, '{9B63DAE9-E83B-4862-9DCA-4B43F5F3E80D}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (17, '2017-10-06', 10, '{D068519C-4554-4E36-907A-F6EF8AC50D2C}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (18, '2017-10-13', 10, '{C322FD67-F454-4E6A-AB1D-0ACED491A18E}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (19, '2017-10-20', 10, '{E6CE8DD5-F5B2-4C06-BB4A-DEB4B45F487A}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (20, '2017-11-10', 10, '{D0C9505F-7C1C-41BC-962C-D4668CA5F70B}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (21, '2017-11-17', 10, '{338477C8-1877-4441-A584-5E4ED34BF6FB}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (22, '2017-09-15', 28, '{8C095051-30AF-43D0-BACB-C0516CABC92E}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (23, '2017-09-22', 28, '{EFC14146-05F4-454F-A61D-DB1C895C7909}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (24, '2017-10-06', 28, '{0B5D7F91-6510-455F-96D2-12FECEB60E1D}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (25, '2017-10-13', 28, '{796E5A09-A194-4E64-B9C2-9A10BE277E32}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (26, '2017-10-20', 28, '{CF3D9515-C2A1-4D6F-AF60-685D571E55EF}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (27, '2017-11-10', 28, '{8D26B210-E7FF-4F62-9A5D-051F66963491}');
+INSERT INTO update_authority (id, event_date, captain_id, guid) VALUES (28, '2017-11-17', 28, '{4B0DD28C-E850-4CFA-97BB-D5C565B0AF78}');
+
+
+--
+-- TOC entry 2172 (class 0 OID 0)
+-- Dependencies: 190
+-- Name: update_authority_id_seq; Type: SEQUENCE SET; Schema: momentum_tournament; Owner: postgres
+--
+
+SELECT pg_catalog.setval('update_authority_id_seq', 28, true);
+
+
+--
+-- TOC entry 2020 (class 2606 OID 30898)
+-- Name: double_game_pkey; Type: CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY double_game
+    ADD CONSTRAINT double_game_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2016 (class 2606 OID 30867)
+-- Name: players_pkey; Type: CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY players
+    ADD CONSTRAINT players_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2018 (class 2606 OID 30880)
+-- Name: single_game_pkey; Type: CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY single_game
+    ADD CONSTRAINT single_game_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2014 (class 2606 OID 30856)
+-- Name: teams_pkey; Type: CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY teams
+    ADD CONSTRAINT teams_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2022 (class 2606 OID 30927)
+-- Name: update_authority_pkey; Type: CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY update_authority
+    ADD CONSTRAINT update_authority_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2026 (class 2606 OID 30899)
+-- Name: double_game_first_pair_first_player_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY double_game
+    ADD CONSTRAINT double_game_first_pair_first_player_id_fkey FOREIGN KEY (first_pair_first_player_id) REFERENCES players(id);
+
+
+--
+-- TOC entry 2027 (class 2606 OID 30904)
+-- Name: double_game_first_pair_second_player_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY double_game
+    ADD CONSTRAINT double_game_first_pair_second_player_id_fkey FOREIGN KEY (first_pair_second_player_id) REFERENCES players(id);
+
+
+--
+-- TOC entry 2028 (class 2606 OID 30909)
+-- Name: double_game_second_pair_first_player_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY double_game
+    ADD CONSTRAINT double_game_second_pair_first_player_id_fkey FOREIGN KEY (second_pair_first_player_id) REFERENCES players(id);
+
+
+--
+-- TOC entry 2029 (class 2606 OID 30914)
+-- Name: double_game_second_pair_second_player_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY double_game
+    ADD CONSTRAINT double_game_second_pair_second_player_id_fkey FOREIGN KEY (second_pair_second_player_id) REFERENCES players(id);
+
+
+--
+-- TOC entry 2023 (class 2606 OID 30868)
+-- Name: players_team_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY players
+    ADD CONSTRAINT players_team_id_fkey FOREIGN KEY (team_id) REFERENCES teams(id);
+
+
+--
+-- TOC entry 2024 (class 2606 OID 30881)
+-- Name: single_game_first_player_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY single_game
+    ADD CONSTRAINT single_game_first_player_id_fkey FOREIGN KEY (first_player_id) REFERENCES players(id);
+
+
+--
+-- TOC entry 2025 (class 2606 OID 30886)
+-- Name: single_game_second_player_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY single_game
+    ADD CONSTRAINT single_game_second_player_id_fkey FOREIGN KEY (second_player_id) REFERENCES players(id);
+
+
+--
+-- TOC entry 2030 (class 2606 OID 30928)
+-- Name: update_authority_captain_id_fkey; Type: FK CONSTRAINT; Schema: momentum_tournament; Owner: postgres
+--
+
+ALTER TABLE ONLY update_authority
+    ADD CONSTRAINT update_authority_captain_id_fkey FOREIGN KEY (captain_id) REFERENCES players(id);
+
+
+--
+-- TOC entry 2161 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2017-09-20 00:08:08
+
+--
+-- PostgreSQL database dump complete
+--
+
