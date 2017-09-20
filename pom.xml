@@ -8,8 +8,8 @@
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
-	<name>SpringBootAngularHttpGet</name>
-	<description>SpringBootAngularHttpGet</description>
+	<name>TableTennisTournamentServer</name>
+	<description>TableTennisTournamentServer</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
