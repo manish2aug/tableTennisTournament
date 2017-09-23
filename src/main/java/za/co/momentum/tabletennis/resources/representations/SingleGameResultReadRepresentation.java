@@ -1,8 +1,13 @@
 package za.co.momentum.tabletennis.resources.representations;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import za.co.momentum.tabletennis.models.Player;
 import za.co.momentum.tabletennis.models.SingleGame;
@@ -50,7 +55,7 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 	}
 
 	public static Collection<SingleGameResultReadRepresentation> getCollection(Collection<SingleGame> singleGames) {
-		Collection<SingleGameResultReadRepresentation> representations = new ArrayList<>();
+		List<SingleGameResultReadRepresentation> representations = new ArrayList<>();
 
 		for (SingleGame game : singleGames) {
 
@@ -85,6 +90,27 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 		}
 
 		updateWinnerName(representations);
+
+		// sort the collection
+		Comparator<SingleGameResultReadRepresentation> comparator = new Comparator<SingleGameResultReadRepresentation>() {
+			@Override
+			public int compare(SingleGameResultReadRepresentation left, SingleGameResultReadRepresentation right) {
+				Date eventDate2 = null;
+				Date eventDate3 = null;
+
+				try {
+					eventDate2 = new SimpleDateFormat("yyyy-MM-dd").parse(left.getEventDate());
+					eventDate3 = new SimpleDateFormat("yyyy-MM-dd").parse(right.getEventDate());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+
+				return eventDate2.compareTo(eventDate3);
+			}
+		};
+
+		Collections.sort(representations, comparator);
+
 		return representations;
 	}
 

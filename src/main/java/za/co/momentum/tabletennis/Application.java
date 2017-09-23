@@ -22,7 +22,7 @@ public class Application {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/rest/*").allowedOrigins("http://localhost:4200", "http://192.168.0.4:4200",
-						"http://105.184.227.10:81", "*");
+						"http://192.168.0.5:4200", "http://105.184.227.10:81", "*");
 				registry.addMapping("/rest/auth/*").allowedOrigins("http://localhost:4200", "http://192.168.0.4:4200",
 						"http://105.184.227.10:81", "*");
 			}

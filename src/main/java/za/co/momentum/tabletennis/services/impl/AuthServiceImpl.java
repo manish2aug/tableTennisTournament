@@ -22,15 +22,13 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public AuthRepresentation checkKey(String guid) throws ParseException {
 
-		List<AuthData> AuthData = repository.findAll();
+		List<AuthData> authData = repository.findByGuid(guid);
 		boolean isValid = false;
 		AuthData foundData = null;
 		String reason = null;
 
-		for (AuthData data : AuthData) {
-			if (data.getGuid().equals(guid)) {
-				foundData = data;
-			}
+		if (authData != null && authData.size() == 1) {
+			foundData = authData.get(0);
 		}
 
 		if (foundData == null) {

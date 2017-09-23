@@ -28,6 +28,7 @@ public class SingleGameResource {
 	@RequestMapping(value = "/singles", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Collection<SingleGameResultReadRepresentation> findAll() {
 		Collection<SingleGame> findAll = service.findAll();
+
 		return SingleGameResultReadRepresentation.getCollection(findAll);
 	}
 
