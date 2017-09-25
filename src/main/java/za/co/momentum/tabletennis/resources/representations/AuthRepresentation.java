@@ -11,7 +11,6 @@ public class AuthRepresentation {
 	
 	public AuthRepresentation() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public AuthRepresentation(String reason, boolean isValid) {

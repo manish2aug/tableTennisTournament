@@ -1,11 +1,13 @@
 package za.co.momentum.tabletennis.resources.representations;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import za.co.momentum.tabletennis.models.Player;
 import za.co.momentum.tabletennis.models.SingleGame;
 
-public class SingleGamrWriteRepresentation {
+public class SingleGameWriteRepresentation {
 	private int firstPlayerId;
 	private int secondPlayerId;
 	private int firstPlayerPoints;
@@ -19,6 +21,20 @@ public class SingleGamrWriteRepresentation {
 		game.setFirstPlayerTotalPoints(firstPlayerPoints);
 		game.setSecondPlayerTotalPoints(secondPlayerPoints);
 		return game;
+	}
+
+	public static Collection<SingleGame> getEntityCollection(Collection<SingleGameWriteRepresentation> singles) {
+		Collection<SingleGame> collection = new ArrayList<>();
+		for (SingleGameWriteRepresentation game : singles) {
+			collection.add(game.getEntityObject());
+		}
+		return collection;
+	}
+	
+	@Override
+	public String toString() {
+		return "SingleGameWriteRepresentation [firstPlayerId=" + firstPlayerId + ", secondPlayerId=" + secondPlayerId
+				+ ", firstPlayerPoints=" + firstPlayerPoints + ", secondPlayerPoints=" + secondPlayerPoints + "]";
 	}
 
 	public int getFirstPlayerId() {

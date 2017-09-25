@@ -20,6 +20,6 @@ public class AuthResource {
 
 	@RequestMapping(value = "/auth/{guid}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public AuthRepresentation findAll(@PathVariable(name = "guid") String guid) throws ParseException {
-		return service.checkKey(guid);
+		return service.validate(guid);
 	}
 }

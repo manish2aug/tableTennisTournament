@@ -20,7 +20,7 @@ public class AuthServiceImpl implements AuthService {
 	private AuthRepository repository;
 
 	@Override
-	public AuthRepresentation checkKey(String guid) throws ParseException {
+	public AuthRepresentation validate(String guid) throws ParseException {
 
 		List<AuthData> authData = repository.findByGuid(guid);
 		boolean isValid = false;
