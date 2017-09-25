@@ -23,7 +23,7 @@ public class PlayerServiceImpl implements PlayerService {
 
 	@Override
 	public Collection<Player> findByTeam(Team team) {
-		return repository.findByTeam(team);
+		return repository.findByTeamOrderByIdAsc(team);
 	}
 
 	@Override

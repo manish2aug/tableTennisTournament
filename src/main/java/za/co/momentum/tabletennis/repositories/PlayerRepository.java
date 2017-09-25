@@ -12,7 +12,7 @@ import za.co.momentum.tabletennis.models.Team;
 
 public interface PlayerRepository extends JpaRepository<Player, Serializable> {
 
-	List<Player> findByTeam(Team team);
+	List<Player> findByTeamOrderByIdAsc(Team team);
 
 	@Query("SELECT p FROM Player p WHERE p.team.id != :teamId")
 	List<Player> findAllPlayersBelongsToOtherTeam(@Param("teamId") int teamId);

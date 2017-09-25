@@ -24,6 +24,7 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 	private String winnerName;
 	private String eventDate;
 	private String winnerTeam;
+	private int winnerPointBalance;
 
 	public SingleGameResultReadRepresentation() {
 		super();
@@ -90,7 +91,7 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 		}
 
 		updateWinnerName(representations);
-
+		updateWinnerPointBalance(representations);
 		// sort the collection
 		Comparator<SingleGameResultReadRepresentation> comparator = new Comparator<SingleGameResultReadRepresentation>() {
 			@Override
@@ -112,6 +113,22 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 		Collections.sort(representations, comparator);
 
 		return representations;
+	}
+
+	private static void updateWinnerPointBalance(List<SingleGameResultReadRepresentation> representations) {
+
+		for (SingleGameResultReadRepresentation rep : representations) {
+			int firstPlayerTotalPoints = 0;
+			int secondPlayerTotalPoints = 0;
+			Collection<ScoreReadRepresentation> scores = rep.getScores();
+
+			for (ScoreReadRepresentation rep2 : scores) {
+				firstPlayerTotalPoints = firstPlayerTotalPoints + rep2.getFirstPlayerPoints();
+				secondPlayerTotalPoints = secondPlayerTotalPoints + rep2.getSecondPlayerPoints();
+			}
+			rep.setWinnerPointBalance(Math.abs(firstPlayerTotalPoints - secondPlayerTotalPoints));
+		}
+
 	}
 
 	private static SingleGameResultReadRepresentation findExisting(
@@ -138,6 +155,15 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 				+ ", secondPlayerFullName=" + secondPlayerFullName + ", secondPlayerImageName=" + secondPlayerImageName
 				+ ", secondPlayerTeamName=" + secondPlayerTeamName + ", scores=" + scores + ", winnerName=" + winnerName
 				+ ", eventDate=" + eventDate + "]";
+	}
+
+	@Override
+	public int getWinnerPointBalance() {
+		return winnerPointBalance;
+	}
+
+	public void setWinnerPointBalance(int winnerPointBalance) {
+		this.winnerPointBalance = winnerPointBalance;
 	}
 
 	public String getFirstPlayerFullName() {

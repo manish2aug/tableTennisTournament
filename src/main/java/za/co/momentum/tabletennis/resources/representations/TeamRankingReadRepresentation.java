@@ -2,6 +2,8 @@ package za.co.momentum.tabletennis.resources.representations;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import za.co.momentum.tabletennis.models.DoubleGame;
 import za.co.momentum.tabletennis.models.SingleGame;
@@ -14,10 +16,10 @@ public class TeamRankingReadRepresentation {
 		Collection<DoubleGameResultReadRepresentation> doubleGames = DoubleGameResultReadRepresentation
 				.getCollection(doubles);
 
-		TempTeam teamA = new TempTeam("A", 0);
-		TempTeam teamB = new TempTeam("B", 0);
-		TempTeam teamC = new TempTeam("C", 0);
-		TempTeam teamD = new TempTeam("D", 0);
+		TempTeam teamA = new TempTeam("A", 0, 0);
+		TempTeam teamB = new TempTeam("B", 0, 0);
+		TempTeam teamC = new TempTeam("C", 0, 0);
+		TempTeam teamD = new TempTeam("D", 0, 0);
 
 		for (SingleGameResultReadRepresentation game : singleGames) {
 			updatePoints(teamA, teamB, teamC, teamD, game);
@@ -29,6 +31,21 @@ public class TeamRankingReadRepresentation {
 
 		TempTeam[] teamArray = new TempTeam[] { teamA, teamB, teamC, teamD };
 		Arrays.sort(teamArray);
+		
+		Collections.sort(Arrays.asList(teamArray), new Comparator<TempTeam>() {
+
+			@Override
+			public int compare(final TempTeam p1, final TempTeam p2) {
+				int diff;
+				diff = p2.getPoints() - p1.getPoints();
+				if (diff == 0)
+					diff = p2.getPointBalance() - p1.getPointBalance();
+				return diff;
+			}
+
+		});
+		
+		
 		return teamArray;
 	}
 
@@ -36,27 +53,33 @@ public class TeamRankingReadRepresentation {
 			GameResultRepresentation game) {
 		if (game.getWinnerTeam().equals("A")) {
 			teamA.setPoints(teamA.getPoints() + 2);
+			teamA.setPointBalance(teamA.getPointBalance() + game.getWinnerPointBalance());
 		} else if (game.getWinnerTeam().equals("B")) {
 			teamB.setPoints(teamB.getPoints() + 2);
+			teamB.setPointBalance(teamB.getPointBalance() + game.getWinnerPointBalance());
 		} else if (game.getWinnerTeam().equals("C")) {
 			teamC.setPoints(teamC.getPoints() + 2);
+			teamC.setPointBalance(teamC.getPointBalance() + game.getWinnerPointBalance());
 		} else if (game.getWinnerTeam().equals("D")) {
 			teamD.setPoints(teamD.getPoints() + 2);
+			teamD.setPointBalance(teamD.getPointBalance() + game.getWinnerPointBalance());
 		}
 	}
 
 	class TempTeam implements Comparable<TempTeam> {
 		private String name;
 		private int points;
+		private int pointBalance;
 
 		public TempTeam() {
 			super();
 		}
 
-		public TempTeam(String name, int points) {
+		public TempTeam(String name, int points, int pointBalance) {
 			super();
 			this.name = name;
 			this.points = points;
+			this.pointBalance = pointBalance;
 		}
 
 		public String getName() {
@@ -73,6 +96,14 @@ public class TeamRankingReadRepresentation {
 
 		public void setPoints(int points) {
 			this.points = points;
+		}
+
+		public int getPointBalance() {
+			return pointBalance;
+		}
+
+		public void setPointBalance(int pointBalance) {
+			this.pointBalance = pointBalance;
 		}
 
 		@Override

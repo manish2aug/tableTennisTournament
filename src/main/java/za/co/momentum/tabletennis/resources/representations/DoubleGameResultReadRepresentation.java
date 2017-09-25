@@ -26,6 +26,7 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 	private String secondPairTeamName;
 	private Collection<ScoreReadRepresentation> scores = new ArrayList<>();
 	private String winnerTeam;
+	private int winnerPointBalance;
 	private String eventDate;
 
 	public DoubleGameResultReadRepresentation() {
@@ -101,6 +102,7 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 		}
 
 		updateWinnerName(representations);
+		updateWinnerPointBalance(representations);
 
 		// sort the collection
 		Comparator<DoubleGameResultReadRepresentation> comparator = new Comparator<DoubleGameResultReadRepresentation>() {
@@ -122,6 +124,22 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 
 		Collections.sort(representations, comparator);
 		return representations;
+
+	}
+
+	private static void updateWinnerPointBalance(List<DoubleGameResultReadRepresentation> representations) {
+
+		for (DoubleGameResultReadRepresentation rep : representations) {
+			int firstPlayerTotalPoints = 0;
+			int secondPlayerTotalPoints = 0;
+			Collection<ScoreReadRepresentation> scores = rep.getScores();
+
+			for (ScoreReadRepresentation rep2 : scores) {
+				firstPlayerTotalPoints = firstPlayerTotalPoints + rep2.getFirstPlayerPoints();
+				secondPlayerTotalPoints = secondPlayerTotalPoints + rep2.getSecondPlayerPoints();
+			}
+			rep.setWinnerPointBalance(Math.abs(firstPlayerTotalPoints - secondPlayerTotalPoints));
+		}
 
 	}
 
@@ -176,6 +194,14 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 			rep.setWinnerTeam(winner);
 		}
 
+	}
+
+	public int getWinnerPointBalance() {
+		return winnerPointBalance;
+	}
+
+	public void setWinnerPointBalance(int winnerPointBalance) {
+		this.winnerPointBalance = winnerPointBalance;
 	}
 
 	public String getFirstPairFirstPlayerFullName() {
