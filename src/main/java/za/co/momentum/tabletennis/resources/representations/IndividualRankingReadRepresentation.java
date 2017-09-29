@@ -1,10 +1,14 @@
 package za.co.momentum.tabletennis.resources.representations;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import za.co.momentum.tabletennis.models.SingleGame;
 
@@ -19,6 +23,8 @@ public class IndividualRankingReadRepresentation {
 			getParticipant(participants, game);
 		}
 
+		calculateParticipantPoints(participants, singleGames);
+		
 		Collections.sort(participants, new Comparator<Participant>() {
 
 			@Override
@@ -26,12 +32,50 @@ public class IndividualRankingReadRepresentation {
 				int diff;
 				diff = p2.getVictories() - p1.getVictories();
 				if (diff == 0)
-					diff = p2.getPoints() - p1.getPoints();
+					diff = Double.compare(p2.getPoints(), p1.getPoints());
 				return diff;
 			}
 
 		});
 		return participants;
+	}
+
+	private void calculateParticipantPoints(Collection<Participant> participants, Collection<SingleGameResultReadRepresentation> games) {
+
+		for (Participant p : participants) {
+			int noOfGames = 0;
+			String name = p.getName();
+			int points = 0;
+
+			for (SingleGameResultReadRepresentation g : games) {
+				boolean isParticipantFirstPlayer = g.getFirstPlayerFullName().equals(name);
+
+				if (isParticipantFirstPlayer || g.getSecondPlayerFullName().equals(name)) {
+					Collection<ScoreReadRepresentation> scores = g.getScores();
+					noOfGames = noOfGames + getNoOfGames(scores);
+
+					for (ScoreReadRepresentation s : scores) {
+						if (isParticipantFirstPlayer) {
+							points = points + s.getFirstPlayerPoints() - s.getSecondPlayerPoints();
+						} else {
+							points = points + s.getSecondPlayerPoints() - s.getFirstPlayerPoints();
+						}
+					}
+				}
+			}
+			
+			p.setPoints(points/(double)noOfGames);
+		}
+	}
+
+	private int getNoOfGames(Collection<ScoreReadRepresentation> scores) {
+		int size = 0;
+		for (ScoreReadRepresentation s : scores) {
+			if(s.getFirstPlayerPoints() != 0 && s.getSecondPlayerPoints() != 0) {
+				size = size + 1;
+			}
+		}
+		return size;
 	}
 
 	private void getParticipant(Collection<Participant> participants, SingleGameResultReadRepresentation game) {
@@ -41,25 +85,28 @@ public class IndividualRankingReadRepresentation {
 		Participant participant = findExisting(participants, gameWinner);
 
 		if (participant == null) {
-			int winnerAccumulatedPoints = 0;
-			Collection<ScoreReadRepresentation> scores = game.getScores();
-			for (ScoreReadRepresentation score : scores) {
-				if (isFirstPlayerWon) {
-					winnerAccumulatedPoints = winnerAccumulatedPoints + score.getFirstPlayerPoints()
-							- score.getSecondPlayerPoints();
-				} else {
-					winnerAccumulatedPoints = winnerAccumulatedPoints + score.getSecondPlayerPoints()
-							- score.getFirstPlayerPoints();
-				}
+			participants.add(
+					new Participant(gameWinner, getPointBalance(isFirstPlayerWon, game.getScores()), 1, wonAgainst));
+		} else {
+			participant.setVictories(participant.getVictories() + 1);
+			participant.setPoints(participant.getPoints() + getPointBalance(isFirstPlayerWon, game.getScores()));
+			List<String> wonAgainstCollection = participant.getWonAgainst();
+			if (!wonAgainstCollection.contains(wonAgainst)) {
+				wonAgainstCollection.add(wonAgainst);
 			}
-			participants.add(new Participant(gameWinner, winnerAccumulatedPoints, 1, wonAgainst));
-			return;
 		}
-		participant.setVictories(participant.getVictories() + 1);
-		List<String> wonAgainstCollection = participant.getWonAgainst();
-		if (!wonAgainstCollection.contains(wonAgainst)) {
-			wonAgainstCollection.add(wonAgainst);
+	}
+
+	private int getPointBalance(boolean isFirstPlayerWon, Collection<ScoreReadRepresentation> scores) {
+		int winnerAccumulatedPoints = 0;
+		for (ScoreReadRepresentation score : scores) {
+			if (isFirstPlayerWon) {
+				winnerAccumulatedPoints = winnerAccumulatedPoints + score.getFirstPlayerPoints() - score.getSecondPlayerPoints();
+			} else {
+				winnerAccumulatedPoints = winnerAccumulatedPoints + score.getSecondPlayerPoints() - score.getFirstPlayerPoints();
+			}
 		}
+		return winnerAccumulatedPoints;
 	}
 
 	private Participant findExisting(Collection<Participant> participants, String gameWinner) {
@@ -73,7 +120,9 @@ public class IndividualRankingReadRepresentation {
 
 	class Participant {
 		private String name;
-		private int points;
+		@JsonIgnore
+		private double points;
+		private String displayPoints;
 		private int victories; // set victory
 		private List<String> wonAgainst = new ArrayList<>();
 
@@ -87,7 +136,7 @@ public class IndividualRankingReadRepresentation {
 			super();
 		}
 
-		public Participant(String name, int points, int victories, String wonAgainst) {
+		public Participant(String name, double points, int victories, String wonAgainst) {
 			super();
 			this.name = name;
 			this.points = points;
@@ -103,11 +152,11 @@ public class IndividualRankingReadRepresentation {
 			this.name = name;
 		}
 
-		public int getPoints() {
+		public double getPoints() {
 			return points;
 		}
 
-		public void setPoints(int points) {
+		public void setPoints(double points) {
 			this.points = points;
 		}
 
@@ -127,12 +176,15 @@ public class IndividualRankingReadRepresentation {
 			this.wonAgainst = wonAgainst;
 		}
 
-		// @Override
-		// public int compareTo(Participant o) {
-		// int comparePoints = ((Participant) o).getVictories();
-		// // descending order
-		// return comparePoints - this.victories;
-		// }
+		public String getDisplayPoints() {
+			DecimalFormat df = new DecimalFormat("#.###");
+			df.setRoundingMode(RoundingMode.CEILING);
+			return df.format(this.points);
+		}
+
+		public void setDisplayPoints(String displayPoints) {
+			this.displayPoints = displayPoints;
+		}
 
 	}
 
