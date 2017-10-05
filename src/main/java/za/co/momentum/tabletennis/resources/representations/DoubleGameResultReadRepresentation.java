@@ -26,6 +26,7 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 	private String secondPairTeamName;
 	private Collection<ScoreReadRepresentation> scores = new ArrayList<>();
 	private String winnerTeam;
+	private String looserTeam;
 	private int winnerPointBalance;
 	private String eventDate;
 
@@ -186,12 +187,16 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 				}
 			}
 			String winner = "";
+			String looser = "";
 			if (firstPairVictories > secondPairVictories) {
 				winner = rep.getFirstPairTeamName();
+				looser = rep.getSecondPairTeamName();
 			} else if (firstPairVictories < secondPairVictories) {
 				winner = rep.getSecondPairTeamName();
+				looser = rep.getFirstPairTeamName();
 			}
 			rep.setWinnerTeam(winner);
+			rep.setLooserTeam(looser);
 		}
 
 	}
@@ -306,6 +311,14 @@ public class DoubleGameResultReadRepresentation implements GameResultRepresentat
 
 	public void setEventDate(String eventDate) {
 		this.eventDate = eventDate;
+	}
+
+	public String getLooserTeam() {
+		return looserTeam;
+	}
+
+	public void setLooserTeam(String looserTeam) {
+		this.looserTeam = looserTeam;
 	}
 
 }

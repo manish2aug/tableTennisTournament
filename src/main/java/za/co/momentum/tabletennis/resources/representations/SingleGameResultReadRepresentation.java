@@ -24,6 +24,7 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 	private String winnerName;
 	private String eventDate;
 	private String winnerTeam;
+	private String looserTeam;
 	private int winnerPointBalance;
 
 	public SingleGameResultReadRepresentation() {
@@ -47,9 +48,11 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 			if (firstPlayerVictories > secondPlayerVictories) {
 				rep.setWinnerName(rep.getFirstPlayerFullName());
 				rep.setWinnerTeam(rep.getFirstPlayerTeamName());
+				rep.setLooserTeam(rep.getSecondPlayerTeamName());
 			} else if (firstPlayerVictories < secondPlayerVictories) {
 				rep.setWinnerName(rep.getSecondPlayerFullName());
 				rep.setWinnerTeam(rep.getSecondPlayerTeamName());
+				rep.setLooserTeam(rep.getFirstPlayerTeamName());
 			}
 		}
 
@@ -245,5 +248,14 @@ public class SingleGameResultReadRepresentation implements GameResultRepresentat
 	public void setWinnerTeam(String winnerTeam) {
 		this.winnerTeam = winnerTeam;
 	}
+
+	public String getLooserTeam() {
+		return looserTeam;
+	}
+
+	public void setLooserTeam(String looserTeam) {
+		this.looserTeam = looserTeam;
+	}
+	
 
 }
