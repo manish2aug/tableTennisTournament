@@ -38,9 +38,6 @@ public class TeamRankingReadRepresentation {
 		teams.add(teamC);
 		teams.add(teamD);
 
-		// TempTeam[] teamArray = new TempTeam[] { teamA, teamB, teamC, teamD };
-		// Arrays.sort(teamArray);
-
 		Collections.sort(teams, new Comparator<TempTeam>() {
 
 			@Override
