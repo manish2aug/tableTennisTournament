@@ -1,0 +1,1228 @@
+openapi: 3.0.1
+info:
+  title: VIA BFF
+  version: '1.0'
+  description: >
+    BFF to the VIA web front end
+servers:
+- url: 'https://internal-retail-dev.momentum.co.za/via-bff/v1'
+  description: Internal development server
+- url: 'https://retail-dev.momentum.co.za/via-bff/v1'
+  description: External development server
+- url: 'https://internal-retail-pre.momentum.co.za/via-bff/v1'
+  description: Internal pre-live server
+- url: 'https://retail-pre.momentum.co.za/via-bff/v1'
+  description: External pre-live server
+- url: 'https://internal-retail.momentum.co.za/via-bff/v1'
+  description: Internal production server
+- url: 'https://retail.momentum.co.za/via-bff/v1'
+  description: External production server
+security:
+- CIFToken: []
+tags:
+- name: Client
+  description: All operations related to client resource
+- name: Look-up
+  description: Operations for look-ups
+paths:
+  '/lookup':
+    get:
+      summary: Returns the supported values for the lookups
+      description: Returns the supported values for the lookups
+      operationId: lookup
+      tags:
+      - Look-up
+      parameters:
+      - $ref: '#/components/parameters/Channel'
+      - $ref: '#/components/parameters/LookupTypeEnum'
+      - $ref: '#/components/parameters/Token'
+      responses:
+        '200':
+          description: Successful response and results from the service.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientCount'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+        '504':
+          $ref: '#/components/responses/TimeOut'
+      security:
+      - CIFToken: []
+  '/total-clients':
+    get:
+      summary: Returns the total count of the clients from the respective backend
+      description: Calls either MC or MFP backend to get a total count of the client
+      operationId: totalClients
+      tags:
+      - Client
+      parameters:
+      - $ref: '#/components/parameters/Channel'
+      - $ref: '#/components/parameters/BrokerHouseCode'
+      - $ref: '#/components/parameters/BrokerCode'
+      - $ref: '#/components/parameters/Token'
+      responses:
+        '200':
+          description: Successful response and results from the service.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientCount'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+        '504':
+          $ref: '#/components/responses/TimeOut'
+      security:
+      - CIFToken: []
+  '/clients':
+    get:
+      summary: Returns the client list from the respective backend
+      description: Calls either MC or MFP backend to get a client list and reformats the payload optimized for the VIA web frontend.
+      operationId: clientList
+      tags:
+      - Client
+      parameters:
+      - $ref: '#/components/parameters/Channel'
+      - $ref: '#/components/parameters/BrokerHouseCode'
+      - $ref: '#/components/parameters/BrokerCode'
+      - $ref: '#/components/parameters/Offset'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response and results from the service. <br><b><font size="2" color="red">Note:- 200 response with empty list as response body may indicate either adviser doesn't have any client or the supplied adviser codes are not valid</font></b></br>
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientListResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+        '504':
+          $ref: '#/components/responses/TimeOut'
+      security:
+      - CIFToken: []
+    post:
+      summary: Create a client
+      description: Add client to MC/MFP Party store
+      operationId: addClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientWriteRepresentation'
+      tags:
+      - Client
+      parameters:
+      - $ref: '#/components/parameters/Token'
+      responses:
+        '201':
+          description: client record created successfully
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Location of newly created client.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientReadRepresentation'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+        '504':
+          $ref: '#/components/responses/TimeOut'
+      security:
+      - CIFToken: []
+  '/clients/{client-id}':
+    get:
+      summary: Returns the client detail
+      description: Calls either MC or MFP backend to get the client detail.
+      operationId: getClient
+      tags:
+      - Client
+      parameters:
+      - $ref: '#/components/parameters/Channel'
+      - $ref: '#/components/parameters/ClientType'
+      - $ref: '#/components/parameters/ClientId'
+      - $ref: '#/components/parameters/Token'
+      responses:
+        '200':
+          description: Successful response and result from the respective service.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientReadRepresentation'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+        '504':
+          $ref: '#/components/responses/TimeOut'
+      security:
+      - CIFToken: []
+    put:
+      summary: Update the client data
+      description: Calls either MC or MFP backend to update the client data
+      operationId: updateClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientWriteRepresentation'
+      tags:
+      - Client
+      parameters:
+      - $ref: '#/components/parameters/ClientId'
+      - $ref: '#/components/parameters/Token'
+      responses:
+        '200':
+          description: Successful response and results from the service.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientCountResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/GeneralError'
+        '504':
+          $ref: '#/components/responses/TimeOut'
+      security:
+      - CIFToken: []
+components:
+  securitySchemes:
+    CIFToken:
+      type: apiKey
+      in: header
+      name: x-access-token
+      description: >-
+        Token-based authentication and authorization. This token is of the JWT
+        type. One can be obtained from the login resource.
+  parameters:
+    LookupTypeEnum:
+      name: type
+      in: query
+      required: true
+      description: An enumeration of lookup types
+      schema:
+        type: string
+        enum: [ADDRESS, CONSUMER_ROLE, CONTACT, DIGITAL, GENDER, IDENTIFICATION_NUMBER_IDENTIFIER, LANGUAGE, MARITAL_STATUS, ORGANISATION, ORGANISATION_NAME, PARTY_NAME, PARTY_ROLE, PERSON_NAME, PHONE, PHYSICAL_ADDRESS, POSTAL_ADDRESS, PREFIX, RACE, REGISTERED_IDENTIFIER, REGISTERING_AUTHORITY, SUPPLIER_ROLE, UNSTRUCTURED_ADDRESS, COUNTRY, DATE]
+    ClientType:
+      name: client-type
+      in: query
+      description: The type of client
+      required: true
+      schema:
+        type: string
+        enum: [NATURAL, JURISTIC]
+    ClientId:
+      name: client-id
+      in: path
+      description: The unique identifier of the client
+      required: true
+      schema:
+        type: string
+    Token:
+      name: x-access-token
+      in: header
+      description: The security token (This will override the other one generated through 'Authorize' option on top)
+      required: false
+      schema:
+        type: string
+    Channel:
+      name: channel
+      in: query
+      description: The channel
+      required: true
+      schema:
+        type: string
+        enum: [MC, MDS, MFP]
+    BrokerHouseCode:
+      name: brokerHouseCode
+      in: query
+      description: The brokerhouse code
+      required: true
+      schema:
+        type: string
+    BrokerCode:
+      name: brokerCode
+      in: query
+      description: The broker Code
+      required: true
+      schema:
+        type: string
+    Offset:
+      name: offset
+      in: query
+      description: The number of results to skip. This will be ignored for MDS/MFP channel.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    Limit:
+      name: limit
+      in: query
+      description: The number of clients to retrieve. This will be ignored for MDS/MFP channel.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 30
+  responses:
+    InvalidRequest:
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - message
+            properties:
+              message:
+                type: string
+              referenceNumber:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - key
+                  - message
+                  properties:
+                    key:
+                      type: string
+                    field:
+                      type: string
+                    message:
+                      type: string
+    TimeOut:
+      description: >-
+        Service request timed out. This status will be returned if a source
+        system does not respond timely.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - message
+            properties:
+              message:
+                type: string
+              referenceNumber:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - key
+                  - message
+                  properties:
+                    key:
+                      type: string
+                    field:
+                      type: string
+                    message:
+                      type: string
+    GeneralError:
+      description: An error occurred while processing the request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+            - message
+            properties:
+              message:
+                type: string
+              referenceNumber:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - key
+                  - message
+                  properties:
+                    key:
+                      type: string
+                    field:
+                      type: string
+                    message:
+                      type: string
+  schemas:
+    ClientCountResponse:
+      type: object
+      required:
+      - count
+      properties:
+        count:
+          type: integer
+    ClientListResponse:
+      type: array
+      items:
+        anyOf:
+        -  $ref: '#/components/schemas/NaturalClient'
+        -  $ref: '#/components/schemas/JuristicClient'
+        discriminator:
+          propertyName: clientType
+    Client:
+      type: object
+      required:
+      - clientType
+      - clientKey
+      - relationshipType
+      properties:
+        clientType:
+          description: Type of client
+          type: string
+          enum: [NATURAL, JURISTIC]
+        relationshipType:
+          $ref: '#/components/schemas/RelationshipTypeEnum'
+        clientKey:
+          description: Unique key that identifies this client in the backend system
+          type: string
+      discriminator:
+        propertyName: clientType
+    NaturalClient:
+      allOf:
+      - $ref: "#/components/schemas/Client"
+      - type: object
+        properties:
+          firstName:
+            description: Firstname of the client
+            type: string
+          lastName:
+            description: Last name of the client
+            type: string
+          contactNumber:
+            description: Contact number of the client
+            type: string
+          contactEmail:
+            description: Email of the client
+            type: string
+            format: email
+    MaritalStatusEnum:
+      description: An enumeration of marital statuses applicable to a natural person
+      enum:
+      - SINGLE
+      - CIVIL_UNION_ANC_WITH_ACCRUAL
+      - CIVIL_UNION_ANC_NO_ACCRUAL
+      - CIVIL_UNION_IN_COP
+      - DIVORCED
+      - MARRIED_ANC_WITH_ACCRUAL
+      - MARRIED_ANC_NO_ACCRUAL
+      - MARRIED_IN_COP
+      - WIDOWED
+      - UNKNOWN
+      type: string
+    NationalityEnum:
+      description: An enumeration of nationalities applicable to a natural person
+      enum:
+      - AD
+      - AE
+      - AF
+      - AG
+      - AI
+      - AL
+      - AM
+      - AO
+      - AQ
+      - AR
+      - AS
+      - AT
+      - AU
+      - AW
+      - AX
+      - AZ
+      - BA
+      - BB
+      - BD
+      - BE
+      - BF
+      - BG
+      - BH
+      - BI
+      - BJ
+      - BL
+      - BM
+      - BN
+      - BO
+      - BQ
+      - BR
+      - BS
+      - BT
+      - BV
+      - BW
+      - BY
+      - BZ
+      - CA
+      - CC
+      - CD
+      - CF
+      - CG
+      - CH
+      - CI
+      - CK
+      - CL
+      - CM
+      - CN
+      - CO
+      - CR
+      - CU
+      - CV
+      - CW
+      - CX
+      - CY
+      - CZ
+      - DE
+      - DJ
+      - DK
+      - DM
+      - DO
+      - DZ
+      - EC
+      - EE
+      - EG
+      - EH
+      - ER
+      - ES
+      - ET
+      - FI
+      - FJ
+      - FK
+      - FM
+      - FO
+      - FR
+      - GA
+      - GB
+      - GD
+      - GE
+      - GF
+      - GG
+      - GH
+      - GI
+      - GL
+      - GM
+      - GN
+      - GP
+      - GQ
+      - GR
+      - GS
+      - GT
+      - GU
+      - GW
+      - GY
+      - HK
+      - HM
+      - HN
+      - HR
+      - HT
+      - HU
+      - ID
+      - IE
+      - IL
+      - IM
+      - IN
+      - IO
+      - IQ
+      - IR
+      - IS
+      - IT
+      - JE
+      - JM
+      - JO
+      - JP
+      - KE
+      - KG
+      - KH
+      - KI
+      - KM
+      - KN
+      - KP
+      - KR
+      - KW
+      - KY
+      - KZ
+      - LA
+      - LB
+      - LC
+      - LI
+      - LK
+      - LR
+      - LS
+      - LT
+      - LU
+      - LV
+      - LY
+      - MA
+      - MC
+      - MD
+      - ME
+      - MF
+      - MG
+      - MH
+      - MK
+      - ML
+      - MM
+      - MN
+      - MO
+      - MP
+      - MQ
+      - MR
+      - MS
+      - MT
+      - MU
+      - MV
+      - MW
+      - MX
+      - MY
+      - MZ
+      - NA
+      - NC
+      - NE
+      - NF
+      - NG
+      - NI
+      - NL
+      - 'NO'
+      - NP
+      - NR
+      - NU
+      - NZ
+      - OM
+      - PA
+      - PE
+      - PF
+      - PG
+      - PH
+      - PK
+      - PL
+      - PM
+      - PN
+      - PR
+      - PS
+      - PT
+      - PW
+      - PY
+      - QA
+      - RE
+      - RO
+      - RS
+      - RU
+      - RW
+      - SA
+      - SB
+      - SC
+      - SD
+      - SE
+      - SG
+      - SH
+      - SI
+      - SJ
+      - SK
+      - SL
+      - SM
+      - SN
+      - SO
+      - SR
+      - SS
+      - ST
+      - SV
+      - SX
+      - SY
+      - SZ
+      - TC
+      - TD
+      - TF
+      - TG
+      - TH
+      - TJ
+      - TK
+      - TL
+      - TM
+      - TN
+      - TO
+      - TR
+      - TT
+      - TV
+      - TW
+      - TZ
+      - UA
+      - UG
+      - UM
+      - US
+      - UY
+      - UZ
+      - VA
+      - VC
+      - VE
+      - VG
+      - VI
+      - VN
+      - VU
+      - WF
+      - WS
+      - YE
+      - YT
+      - ZA
+      - ZM
+      - ZW
+      type: string
+    GenderEnum:
+      description: An enumeration of genders applicable to a natural person
+      enum:
+      - FEMALE
+      - MALE
+      - UNKNOWN
+      type: string
+    ClientTypeEnum:
+      description: An enumeration of client type
+      enum:
+      - NATURAL
+      - JURISTIC
+      type: string
+    ChannelEnum:
+      description: An enumeration of supported channel
+      enum:
+      - MC
+      - MDS
+      - MFP
+      type: string
+    RelationshipTypeEnum:
+      description: An enumeration of relationship types
+      enum:
+      - CLIENT
+      - PROSPECTS
+      type: string
+    ContextTypeEnum:
+      description: An enumeration of supported context type
+      enum:
+      - CDB
+      type: string
+    RaceEnum:
+      description: An enumeration of races applicable to a natural person
+      enum:
+      - BLACK
+      - WHITE
+      - COLOURED
+      - INDIAN
+      - ASIAN
+      - OTHER
+      - UNKNOWN
+      type: string
+    PrefixEnum:
+      description: An enumeration of prefixes applicable to a natural person
+      enum:
+      - ADVOCATE
+      - DOCTOR
+      - MISS
+      - MS
+      - MR
+      - MRS
+      - PROFESSOR
+      - UNKNOWN
+      type: string
+    RegisteringAuthorityEnum:
+      description: An enumeration of valid registering authorities
+      enum:
+      - HOME_AFFAIRS
+      - MOMENTUM_CONSULT
+      type: string
+    JuristicPersonRegisteredIdentifierEnum:
+      description: An enumeration of valid registered identifiers applicable to a juristic person
+      enum:
+      - ID
+      - REGISTRATION_NUMBER
+      - UNIQUE
+      type: string
+    CountryEnum:
+      description: An enumeration of two letter country codes
+      enum:
+      - AD
+      - AE
+      - AF
+      - AG
+      - AI
+      - AL
+      - AM
+      - AO
+      - AQ
+      - AR
+      - AS
+      - AT
+      - AU
+      - AW
+      - AX
+      - AZ
+      - BA
+      - BB
+      - BD
+      - BE
+      - BF
+      - BG
+      - BH
+      - BI
+      - BJ
+      - BL
+      - BM
+      - BN
+      - BO
+      - BQ
+      - BR
+      - BS
+      - BT
+      - BV
+      - BW
+      - BY
+      - BZ
+      - CA
+      - CC
+      - CD
+      - CF
+      - CG
+      - CH
+      - CI
+      - CK
+      - CL
+      - CM
+      - CN
+      - CO
+      - CR
+      - CU
+      - CV
+      - CW
+      - CX
+      - CY
+      - CZ
+      - DE
+      - DJ
+      - DK
+      - DM
+      - DO
+      - DZ
+      - EC
+      - EE
+      - EG
+      - EH
+      - ER
+      - ES
+      - ET
+      - FI
+      - FJ
+      - FK
+      - FM
+      - FO
+      - FR
+      - GA
+      - GB
+      - GD
+      - GE
+      - GF
+      - GG
+      - GH
+      - GI
+      - GL
+      - GM
+      - GN
+      - GP
+      - GQ
+      - GR
+      - GS
+      - GT
+      - GU
+      - GW
+      - GY
+      - HK
+      - HM
+      - HN
+      - HR
+      - HT
+      - HU
+      - ID
+      - IE
+      - IL
+      - IM
+      - IN
+      - IO
+      - IQ
+      - IR
+      - IS
+      - IT
+      - JE
+      - JM
+      - JO
+      - JP
+      - KE
+      - KG
+      - KH
+      - KI
+      - KM
+      - KN
+      - KP
+      - KR
+      - KW
+      - KY
+      - KZ
+      - LA
+      - LB
+      - LC
+      - LI
+      - LK
+      - LR
+      - LS
+      - LT
+      - LU
+      - LV
+      - LY
+      - MA
+      - MC
+      - MD
+      - ME
+      - MF
+      - MG
+      - MH
+      - MK
+      - ML
+      - MM
+      - MN
+      - MO
+      - MP
+      - MQ
+      - MR
+      - MS
+      - MT
+      - MU
+      - MV
+      - MW
+      - MX
+      - MY
+      - MZ
+      - NA
+      - NC
+      - NE
+      - NF
+      - NG
+      - NI
+      - NL
+      - 'NO'
+      - NP
+      - NR
+      - NU
+      - NZ
+      - OM
+      - PA
+      - PE
+      - PF
+      - PG
+      - PH
+      - PK
+      - PL
+      - PM
+      - PN
+      - PR
+      - PS
+      - PT
+      - PW
+      - PY
+      - QA
+      - RE
+      - RO
+      - RS
+      - RU
+      - RW
+      - SA
+      - SB
+      - SC
+      - SD
+      - SE
+      - SG
+      - SH
+      - SI
+      - SJ
+      - SK
+      - SL
+      - SM
+      - SN
+      - SO
+      - SR
+      - SS
+      - ST
+      - SV
+      - SX
+      - SY
+      - SZ
+      - TC
+      - TD
+      - TF
+      - TG
+      - TH
+      - TJ
+      - TK
+      - TL
+      - TM
+      - TN
+      - TO
+      - TR
+      - TT
+      - TV
+      - TW
+      - TZ
+      - UA
+      - UG
+      - UM
+      - US
+      - UY
+      - UZ
+      - VA
+      - VC
+      - VE
+      - VG
+      - VI
+      - VN
+      - VU
+      - WF
+      - WS
+      - YE
+      - YT
+      - ZA
+      - ZM
+      - ZW
+      type: string
+    AddressTypeEnum:
+      description: An enumeration of supported address types
+      enum:
+      - PHYSICAL_ADDRESS
+      - POSTAL_ADDRESS
+      - UNSTRUCTURED_ADDRESS
+      type: string
+      example: PHYSICAL_ADDRESS
+    Address:
+      description: an object that represents an unstructured address
+      required:
+      - type
+      - country
+      - postalCode
+      - line1
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AddressTypeEnum'
+        name:
+          description: a name that describes the address
+          type: string
+        line1:
+          description: the first address line of the address
+          type: string
+        line2:
+          description: the second address line of the address
+          type: string
+        line3:
+          description: the third address line of the address
+          type: string
+        line4:
+          description: the fourth address line of the address
+          type: string
+        postalCode:
+          description: The postal code which is associated with the address
+          type: string
+        country:
+          $ref: '#/components/schemas/CountryEnum'
+    RegisteredIdentifier:
+      required:
+      - identifier
+      - type
+      - registeringAuthority
+      - countryOfIssue
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/JuristicPersonRegisteredIdentifierEnum'
+        identifier:
+          description: the actual number or string of the identifier
+          type: string
+        registeringAuthority:
+          $ref: '#/components/schemas/RegisteringAuthorityEnum'
+        countryOfIssue:
+          $ref: '#/components/schemas/CountryEnum'
+        effectiveFrom:
+          description: the date the identifier was issued or activated
+          type: string
+          example: '2018-01-01'
+        effectiveTo:
+          description: the expiry date of the identifier
+          type: string
+          example: '2018-01-01'
+    JuristicClient:
+      allOf:
+      - $ref: "#/components/schemas/Client"
+      - type: object
+        properties:
+          tradingName:
+            description: Client trading name
+            type: string
+          contactNumber:
+            description: contactNumber of the client
+            type: string
+          contactEmail:
+            description: Email of the client
+            type: string
+            format: email
+    NaturalPerson:
+      description: object that inherits from party that represents a natural person
+      required:
+      - surname
+      allOf:
+      - $ref: "#/components/schemas/CommonClientData"
+      type: object
+      properties:
+        prefix:
+          $ref: '#/components/schemas/PrefixEnum'
+        firstName:
+          description: the first name of a natural person
+          type: string
+        surname:
+          description: the surname or lastname of the natural person
+          minLength: 1
+          type: string
+        middleNames:
+          description: the middle name(s) of the natural person
+          type: string
+        initials:
+          description: the initials of the natural person
+          type: string
+        preferredName:
+          description: the natural person's preferred name for communications
+          type: string
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        race:
+          $ref: '#/components/schemas/RaceEnum'
+        birthDate:
+          format: date
+          description: the date on which the natural person was born
+          type: string
+          example: '2018-01-01'
+        deathDate:
+          format: date
+          description: the date on which the natural person died
+          type: string
+          example: '2018-01-01'
+        maritalStatus:
+          $ref: '#/components/schemas/MaritalStatusEnum'
+        countryOfResidence:
+          $ref: '#/components/schemas/CountryEnum'
+        nationality:
+          $ref: '#/components/schemas/NationalityEnum'
+        marriageDate:
+          format: date
+          description: The date of marriage.  Required if married ANC
+          type: string
+    JuristicPerson:
+      description: an object that represents a non-natural person
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/CommonClientData"
+      properties:
+        type:
+          description: the type of company or organisation
+          type: string
+        registeredName:
+          description: the registered name of a juristic
+          type: string
+        tradingName:
+          description: the trading name of tmainhe juristic
+          type: string
+        vatNumber:
+          description: the VAT number of the juristic
+          type: string
+    ContactDetail:
+      description: object that inherits from party that represents a natural person
+      type: object
+      properties:
+        homePhone:
+          description: the optional home phone number of the natural person
+          pattern: '^\+27(\d{9})$'
+          type: string
+        mobilePhone:
+          description: the optional natural person's mobile phone number
+          pattern: '^\+27(\d{9})$'
+          type: string
+        businessPhone:
+          description: the optional business phone number of the natural person
+          pattern: '^\+27(\d{9})$'
+          type: string
+        fax:
+          description: the optional fax number of the natural person
+          pattern: '^\+27(\d{9})$'
+          type: string
+        email:
+          format: email
+          description: the optional email address of the natural person
+          type: string
+    CommonClientData:
+      type: object
+      properties:
+        contactDetails:
+          $ref: '#/components/schemas/ContactDetail'
+        addresses:
+          description: a list of addresses linked to a party
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        registeredIdentifiers:
+          description: a list of registered identifiers
+          type: array
+          items:
+            $ref: '#/components/schemas/RegisteredIdentifier'
+    ClientMetaData:
+      type: object
+      properties:
+        clientType:
+          $ref: '#/components/schemas/ClientTypeEnum'
+        channel:
+          $ref: '#/components/schemas/ChannelEnum'
+        contextKey:
+          description: Contact key of the caller
+          type: string
+        contextType:
+          $ref: '#/components/schemas/ContextTypeEnum'
+    ClientWriteRepresentation:
+      description: an object that represents a non-natural person
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/ClientMetaData'
+      oneOf:
+      - $ref: '#/components/schemas/NaturalPerson'
+      - $ref: '#/components/schemas/JuristicPerson'
+    ClientReadRepresentation:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/NaturalPerson'
+      - $ref: '#/components/schemas/JuristicPerson'
+      properties:
+        clientType:
+          $ref: '#/components/schemas/ClientTypeEnum'
+        relationshipType:
+          $ref: '#/components/schemas/RelationshipTypeEnum'
+        clientKey:
+          description: Unique identifier of the client
+          type: string
+    ClientCount:
+      type: object
+      properties:
+        count:
+          format: int32
+          type: integer
